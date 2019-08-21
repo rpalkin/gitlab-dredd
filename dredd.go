@@ -54,6 +54,7 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 	if d.DryRun {
 		return nil
 	}
+	// TODO: d.GitLab.ProtectedBranches.ProtectRepositoryBranches()
 	_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
 	if err != nil {
 		return err
