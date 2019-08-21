@@ -20,6 +20,7 @@ var (
 	listenAddress  = flag.String("listen-address", ":8080", "Address to serve HTTP requests")
 	insecureClient = flag.Bool("k", false, "Disable SSL verification")
 	configFile     = flag.String("config", "dredd.yaml", "Path to configuration file")
+	dryRun         = flag.Bool("dry-run", false, "Runs without making changes")
 
 	netTransport = &http.Transport{
 		Dial: (&net.Dialer{
@@ -67,6 +68,7 @@ func main() {
 	dredd := &Dredd{
 		GitLab: client,
 		Config: config,
+		DryRun: *dryRun,
 	}
 	err = dredd.Run()
 	if err != nil {

@@ -29,3 +29,15 @@ func LoadFromFile(filename string) (*Config, error) {
 	}
 	return config, nil
 }
+
+func (c *Config) OptionsByPath(ns string) *Options {
+	parts := GetNamespaceParts(ns)
+	for _, part := range parts {
+		opt, ok := c.Options[part]
+		if !ok {
+			continue
+		}
+		return opt
+	}
+	return nil
+}

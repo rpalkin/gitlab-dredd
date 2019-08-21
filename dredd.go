@@ -10,6 +10,7 @@ import (
 type Dredd struct {
 	GitLab *gitlab.Client
 	Config *Config
+	DryRun bool
 }
 
 func (d *Dredd) Run() error {
@@ -43,24 +44,31 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 	if err != nil {
 		return err
 	}
-	if !d.hasProjectApprovalsChanges(approvals) {
+	opts := d.Config.OptionsByPath(project.PathWithNamespace)
+	if opts == nil {
 		return nil
 	}
-	_, _, err = d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &d.Config.Options.AllowedApprovers)
+	if !d.hasProjectApprovalsChanges(opts, approvals) {
+		return nil
+	}
+	if d.DryRun {
+		return nil
+	}
+	_, _, err = d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &opts.AllowedApprovers)
 	if err != nil {
 		return err
 	}
-	_, _, err = d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, &d.Config.Options.ApprovalConfiguration)
+	_, _, err = d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, &opts.ApprovalConfiguration)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (d *Dredd) hasProjectApprovalsChanges(approvals *gitlab.ProjectApprovals) bool {
+func (d *Dredd) hasProjectApprovalsChanges(opts *Options, approvals *gitlab.ProjectApprovals) bool {
 	changed := false
-	ac := d.Config.Options.ApprovalConfiguration
-	aa := d.Config.Options.AllowedApprovers
+	ac := opts.ApprovalConfiguration
+	aa := opts.AllowedApprovers
 	if ac.ApprovalsBeforeMerge != nil {
 		if *ac.ApprovalsBeforeMerge != approvals.ApprovalsBeforeMerge {
 			logrus.Infof(
