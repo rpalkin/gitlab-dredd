@@ -1,6 +1,33 @@
 ---
 groupID: 32
 options:
+  devops/k8s-tools:
+    allowedApprovers:
+      approverids: [2, 9, 64]
+      approvergroupids: []
+    approvalConfiguration:
+      approvalsbeforemerge: 1
+      resetapprovalsonpush: true
+      disableoverridingapproverspermergerequest: false
+      mergerequestsauthorapproval: false
+  devops/gcp-projects:
+    allowedApprovers:
+      approverids: [2, 9, 64]
+      approvergroupids: []
+    approvalConfiguration:
+      approvalsbeforemerge: 1
+      resetapprovalsonpush: true
+      disableoverridingapproverspermergerequest: false
+      mergerequestsauthorapproval: false
+  devops/k8s-infrastructure:
+    allowedApprovers:
+      approverids: [2, 9, 64]
+      approvergroupids: []
+    approvalConfiguration:
+      approvalsbeforemerge: 1
+      resetapprovalsonpush: true
+      disableoverridingapproverspermergerequest: false
+      mergerequestsauthorapproval: false
   devops:
     allowedApprovers:
       approverids: [2, 3, 9, 64]
