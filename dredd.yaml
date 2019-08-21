@@ -2,6 +2,10 @@
 groupIDs: [32, 128, 233]
 # 
 global: &global
+  projectOptions:
+    onlyallowmergeifpipelinesucceeds: true
+    onlyallowmergeifalldiscussionsareresolved: true
+    approvalsbeforemerge: 1
   approvalConfiguration:
     approvalsbeforemerge: 1
     resetapprovalsonpush: true

@@ -44,19 +44,19 @@ func (d *Dredd) processProjects(projects []*gitlab.Project) error {
 
 func (d *Dredd) processProject(project *gitlab.Project) error {
 	logrus.Infof("Processing %s project...", project.PathWithNamespace)
-	approvals, _, err := d.GitLab.Projects.GetApprovalConfiguration(project.ID)
-	if err != nil {
-		return err
-	}
 	opts := d.Config.OptionsByPath(project.PathWithNamespace)
 	if opts == nil {
 		return nil
 	}
-	if !d.hasProjectApprovalsChanges(opts, approvals) {
+	if !d.hasProjectChanges(opts, project) {
 		return nil
 	}
 	if d.DryRun {
 		return nil
+	}
+	_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
+	if err != nil {
+		return err
 	}
 	_, _, err = d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &opts.AllowedApprovers)
 	if err != nil {
@@ -69,10 +69,45 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 	return nil
 }
 
-func (d *Dredd) hasProjectApprovalsChanges(opts *Options, approvals *gitlab.ProjectApprovals) bool {
+func (d *Dredd) hasProjectChanges(opts *Options, project *gitlab.Project) bool {
 	changed := false
 	ac := opts.ApprovalConfiguration
 	aa := opts.AllowedApprovers
+	po := opts.ProjectOptions
+	approvals, _, err := d.GitLab.Projects.GetApprovalConfiguration(project.ID)
+	if err != nil {
+		return false
+	}
+	if po.ApprovalsBeforeMerge != nil {
+		if *po.ApprovalsBeforeMerge != project.ApprovalsBeforeMerge {
+			logrus.Infof(
+				"Approvals Before Merge: %d != %d",
+				project.ApprovalsBeforeMerge,
+				*po.ApprovalsBeforeMerge,
+			)
+			changed = true
+		}
+	}
+	if po.OnlyAllowMergeIfPipelineSucceeds != nil {
+		if *po.OnlyAllowMergeIfPipelineSucceeds != project.OnlyAllowMergeIfPipelineSucceeds {
+			logrus.Infof(
+				"Only Allow Merge If Pipeline Succeeds: %v != %v",
+				project.OnlyAllowMergeIfPipelineSucceeds,
+				*po.OnlyAllowMergeIfPipelineSucceeds,
+			)
+			changed = true
+		}
+	}
+	if po.OnlyAllowMergeIfAllDiscussionsAreResolved != nil {
+		if *po.OnlyAllowMergeIfAllDiscussionsAreResolved != project.OnlyAllowMergeIfAllDiscussionsAreResolved {
+			logrus.Infof(
+				"Only Allow Merge If All Discussions Are Resolved: %v != %v",
+				project.OnlyAllowMergeIfAllDiscussionsAreResolved,
+				*po.OnlyAllowMergeIfAllDiscussionsAreResolved,
+			)
+			changed = true
+		}
+	}
 	if ac.ApprovalsBeforeMerge != nil {
 		if *ac.ApprovalsBeforeMerge != approvals.ApprovalsBeforeMerge {
 			logrus.Infof(
