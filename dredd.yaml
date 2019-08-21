@@ -1,5 +1,6 @@
 ---
-groupID: 32
+groupIDs: [32, 128, 233]
+# 
 global: &global
   approvalConfiguration:
     approvalsbeforemerge: 1
@@ -14,6 +15,7 @@ all: &all
 k8s: &k8s
   allowedApprovers:
     approverids: [2, 9, 64]
+# 
 options:
   devops/k8s-tools:
     <<: *global
@@ -22,6 +24,12 @@ options:
     <<: *global
     <<: *k8s
   devops/k8s-infrastructure:
+    <<: *global
+    <<: *k8s
+  devops-public:
+    <<: *global
+    <<: *k8s
+  pfa/k8s-specs:
     <<: *global
     <<: *k8s
   devops:

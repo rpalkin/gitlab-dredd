@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	GroupID int                 `yaml:"groupID"`
-	Options map[string]*Options `yaml:"options"`
+	GroupIDs []int               `yaml:"groupIDs"`
+	Options  map[string]*Options `yaml:"options"`
 }
 
 type Options struct {

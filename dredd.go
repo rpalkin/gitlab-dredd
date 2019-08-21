@@ -15,11 +15,15 @@ type Dredd struct {
 
 func (d *Dredd) Run() error {
 	logrus.Info("Requesting projects list...")
-	projects, err := d.GetProjects(d.Config.GroupID)
-	if err != nil {
-		return err
+	var projects []*gitlab.Project
+	for _, group := range d.Config.GroupIDs {
+		ps, err := d.GetProjects(group)
+		if err != nil {
+			return err
+		}
+		projects = append(projects, ps...)
 	}
-	err = d.processProjects(projects)
+	err := d.processProjects(projects)
 	if err != nil {
 		return err
 	}
@@ -39,7 +43,7 @@ func (d *Dredd) processProjects(projects []*gitlab.Project) error {
 }
 
 func (d *Dredd) processProject(project *gitlab.Project) error {
-	logrus.Infof("Processing %s project...", project.Name)
+	logrus.Infof("Processing %s project...", project.PathWithNamespace)
 	approvals, _, err := d.GitLab.Projects.GetApprovalConfiguration(project.ID)
 	if err != nil {
 		return err
