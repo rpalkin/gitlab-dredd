@@ -1,3 +1,3 @@
-# Judge Dredd
+# Dredd
 
-I am The Law.
+Sync approvers, project options and approval configuration in GitLab.
