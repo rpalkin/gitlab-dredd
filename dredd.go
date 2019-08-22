@@ -48,66 +48,32 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 	if opts == nil {
 		return nil
 	}
-	if !d.hasProjectChanges(opts, project) {
-		return nil
-	}
-	if d.DryRun {
-		return nil
-	}
 	// TODO: d.GitLab.ProtectedBranches.ProtectRepositoryBranches()
-	_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
-	if err != nil {
-		return err
+	if d.hasProjectChanges(opts, project) && !d.DryRun {
+		_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
+		if err != nil {
+			return err
+		}
 	}
-	_, _, err = d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &opts.AllowedApprovers)
-	if err != nil {
-		return err
-	}
-	_, _, err = d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, &opts.ApprovalConfiguration)
-	if err != nil {
-		return err
+	if d.hasProjectApprovalChanges(opts, project) && !d.DryRun {
+		_, _, err := d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &opts.AllowedApprovers)
+		if err != nil {
+			return err
+		}
+		_, _, err = d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, &opts.ApprovalConfiguration)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (d *Dredd) hasProjectChanges(opts *Options, project *gitlab.Project) bool {
-	changed := false
+func (d *Dredd) hasProjectApprovalChanges(opts *Options, project *gitlab.Project) (changed bool) {
 	ac := opts.ApprovalConfiguration
 	aa := opts.AllowedApprovers
-	po := opts.ProjectOptions
 	approvals, _, err := d.GitLab.Projects.GetApprovalConfiguration(project.ID)
 	if err != nil {
 		return false
-	}
-	if po.ApprovalsBeforeMerge != nil {
-		if *po.ApprovalsBeforeMerge != project.ApprovalsBeforeMerge {
-			logrus.Infof(
-				"Approvals Before Merge: %d != %d",
-				project.ApprovalsBeforeMerge,
-				*po.ApprovalsBeforeMerge,
-			)
-			changed = true
-		}
-	}
-	if po.OnlyAllowMergeIfPipelineSucceeds != nil {
-		if *po.OnlyAllowMergeIfPipelineSucceeds != project.OnlyAllowMergeIfPipelineSucceeds {
-			logrus.Infof(
-				"Only Allow Merge If Pipeline Succeeds: %v != %v",
-				project.OnlyAllowMergeIfPipelineSucceeds,
-				*po.OnlyAllowMergeIfPipelineSucceeds,
-			)
-			changed = true
-		}
-	}
-	if po.OnlyAllowMergeIfAllDiscussionsAreResolved != nil {
-		if *po.OnlyAllowMergeIfAllDiscussionsAreResolved != project.OnlyAllowMergeIfAllDiscussionsAreResolved {
-			logrus.Infof(
-				"Only Allow Merge If All Discussions Are Resolved: %v != %v",
-				project.OnlyAllowMergeIfAllDiscussionsAreResolved,
-				*po.OnlyAllowMergeIfAllDiscussionsAreResolved,
-			)
-			changed = true
-		}
 	}
 	if ac.ApprovalsBeforeMerge != nil {
 		if *ac.ApprovalsBeforeMerge != approvals.ApprovalsBeforeMerge {
@@ -155,6 +121,41 @@ func (d *Dredd) hasProjectChanges(opts *Options, project *gitlab.Project) bool {
 				"Approvers: %d != %d",
 				len(approvals.Approvers),
 				len(aa.ApproverIDs),
+			)
+			changed = true
+		}
+	}
+	return changed
+}
+
+func (d *Dredd) hasProjectChanges(opts *Options, project *gitlab.Project) (changed bool) {
+	po := opts.ProjectOptions
+	if po.ApprovalsBeforeMerge != nil {
+		if *po.ApprovalsBeforeMerge != project.ApprovalsBeforeMerge {
+			logrus.Infof(
+				"Approvals Before Merge: %d != %d",
+				project.ApprovalsBeforeMerge,
+				*po.ApprovalsBeforeMerge,
+			)
+			changed = true
+		}
+	}
+	if po.OnlyAllowMergeIfPipelineSucceeds != nil {
+		if *po.OnlyAllowMergeIfPipelineSucceeds != project.OnlyAllowMergeIfPipelineSucceeds {
+			logrus.Infof(
+				"Only Allow Merge If Pipeline Succeeds: %v != %v",
+				project.OnlyAllowMergeIfPipelineSucceeds,
+				*po.OnlyAllowMergeIfPipelineSucceeds,
+			)
+			changed = true
+		}
+	}
+	if po.OnlyAllowMergeIfAllDiscussionsAreResolved != nil {
+		if *po.OnlyAllowMergeIfAllDiscussionsAreResolved != project.OnlyAllowMergeIfAllDiscussionsAreResolved {
+			logrus.Infof(
+				"Only Allow Merge If All Discussions Are Resolved: %v != %v",
+				project.OnlyAllowMergeIfAllDiscussionsAreResolved,
+				*po.OnlyAllowMergeIfAllDiscussionsAreResolved,
 			)
 			changed = true
 		}
