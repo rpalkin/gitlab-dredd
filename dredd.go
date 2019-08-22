@@ -48,7 +48,6 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 	if opts == nil {
 		return nil
 	}
-	// TODO: https://docs.gitlab.com/ee/api/merge_request_approvals.html#create-project-level-rule
 	if d.hasProjectChanges(opts, project) && !d.DryRun {
 		_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
 		if err != nil {
