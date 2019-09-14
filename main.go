@@ -21,6 +21,8 @@ var (
 	insecureClient = flag.Bool("k", false, "Disable SSL verification")
 	configFile     = flag.String("config", "dredd.yaml", "Path to configuration file")
 	dryRun         = flag.Bool("dry-run", false, "Runs without making changes")
+	pluginMode     = flag.Bool("plugin", true, "Runs as a GitLab plugin.")
+	logLevel       = flag.String("log-level", "INFO", "Level of logging (trace, debug, info, warning, error, fatal, panic).")
 
 	netTransport = &http.Transport{
 		Dial: (&net.Dialer{
@@ -37,17 +39,24 @@ var (
 func main() {
 	flag.Parse()
 
+	level, err := logrus.ParseLevel(*logLevel)
+	if err == nil {
+		logrus.SetLevel(level)
+	}
+
 	token := os.Getenv("GITLAB_TOKEN")
 	endpoint := os.Getenv("GITLAB_ENDPOINT")
 	if len(endpoint) == 0 {
 		endpoint = defaultBaseURL
 	}
 
-	logrus.Info("Starting dredd...")
-	logrus.Infof("GitLab endpoint: %s", endpoint)
+	logrus.WithFields(logrus.Fields{
+		"plugin":   *pluginMode,
+		"endpoint": endpoint,
+		"insecure": *insecureClient,
+	}).Info("Starting gitlab-dredd...")
 
 	if *insecureClient {
-		logrus.Warn("SSL verification disabled")
 		netTransport.TLSClientConfig = &tls.Config{
 			InsecureSkipVerify: true,
 		}
@@ -70,6 +79,15 @@ func main() {
 		Config: config,
 		DryRun: *dryRun,
 	}
+
+	if *pluginMode {
+		err = dredd.Hook()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		return
+	}
+
 	err = dredd.Run()
 	if err != nil {
 		logrus.Fatal(err)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
@@ -11,6 +12,26 @@ type Dredd struct {
 	GitLab *gitlab.Client
 	Config *Config
 	DryRun bool
+}
+
+func (d *Dredd) Hook() error {
+	hook, err := GetStdinHookPayload()
+	if err != nil {
+		return fmt.Errorf("Failed to process payload: %v", err)
+	}
+	if hook.EventName != "project_create" {
+		return nil
+	}
+	logrus.Debugf("Payload received: %#v", hook)
+	project, _, err := d.GitLab.Projects.GetProject(hook.ProjectID, nil)
+	if err != nil {
+		return err
+	}
+	err = d.processProjects([]*gitlab.Project{project})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (d *Dredd) Run() error {
