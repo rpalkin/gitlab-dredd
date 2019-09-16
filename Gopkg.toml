@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/xanzy/go-gitlab"
-  version = "0.20.1"
+  revision = "4c55e6dce72e64ab8bde5db2aa8c39e5f7f8468c"
 
 [[constraint]]
   name = "gopkg.in/yaml.v2"
