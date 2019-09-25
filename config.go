@@ -13,9 +13,10 @@ type Config struct {
 }
 
 type Options struct {
-	AllowedApprovers      gitlab.ChangeAllowedApproversOptions      `yaml:"allowedApprovers"`
-	ApprovalConfiguration gitlab.ChangeApprovalConfigurationOptions `yaml:"approvalConfiguration"`
-	ProjectOptions        gitlab.EditProjectOptions                 `yaml:"projectOptions"`
+	AllowedApprovers      gitlab.ChangeAllowedApproversOptions       `yaml:"allowedApprovers"`
+	ApprovalConfiguration gitlab.ChangeApprovalConfigurationOptions  `yaml:"approvalConfiguration"`
+	ProjectOptions        gitlab.EditProjectOptions                  `yaml:"projectOptions"`
+	RepositoryBranches    []*gitlab.ProtectRepositoryBranchesOptions `yaml:"repositoryBranches"`
 }
 
 func LoadFromFile(filename string) (*Config, error) {

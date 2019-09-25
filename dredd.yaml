@@ -1,5 +1,6 @@
 ---
-groupIDs: [32, 128, 233]
+# groupIDs: [32, 128, 233]
+groupIDs: [128]
 # 
 global: &global
   projectOptions:
@@ -13,6 +14,12 @@ global: &global
     mergerequestsauthorapproval: false
   allowedApprovers:
     approvergroupids: []
+  repositoryBranches:
+    - name: master
+      pushaccesslevels:
+        - accesslevel: 30
+      mergeaccesslevels:
+        - accesslevel: 30
 all: &all
   allowedApprovers:
     approverids: [2, 3, 9, 64]
