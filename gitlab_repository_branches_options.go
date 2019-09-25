@@ -8,6 +8,9 @@ import (
 )
 
 func (d *Dredd) HasRepositoryBranchesOptionsChanges(project *gitlab.Project, opts *Options) (changed bool) {
+	if len(opts.RepositoryBranches) == 0 {
+		return false
+	}
 	logrus.Info("Branch options is constantly refreshed")
 	return true
 }

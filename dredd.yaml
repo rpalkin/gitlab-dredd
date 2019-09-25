@@ -1,6 +1,5 @@
 ---
-# groupIDs: [32, 128, 233]
-groupIDs: [128, 233]
+groupIDs: [32, 128, 233]
 # 
 global: &global
   projectOptions:
@@ -14,33 +13,38 @@ global: &global
     mergerequestsauthorapproval: false
   allowedApprovers:
     approvergroupids: []
+master-protected: &master-protected
   repositoryBranches:
     - name: master
       pushaccesslevel: 0
       mergeaccesslevel: 30
-all: &all
+review-all: &review-all
   allowedApprovers:
     approverids: [2, 3, 9, 64]
-k8s: &k8s
+review-k8s: &review-k8s
   allowedApprovers:
     approverids: [2, 9, 64]
 # 
 options:
   devops/k8s-tools:
     <<: *global
-    <<: *k8s
+    <<: *review-k8s
   devops/gcp-projects:
     <<: *global
-    <<: *k8s
+    <<: *review-k8s
+    <<: *master-protected
   devops/k8s-infrastructure:
     <<: *global
-    <<: *k8s
+    <<: *review-k8s
+    <<: *master-protected
   devops-public:
     <<: *global
-    <<: *k8s
+    <<: *review-k8s
+    <<: *master-protected
   pfa/k8s-specs:
     <<: *global
-    <<: *k8s
+    <<: *review-k8s
+    <<: *master-protected
   devops:
     <<: *global
-    <<: *all
+    <<: *review-all
