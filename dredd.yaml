@@ -1,6 +1,5 @@
 ---
-# groupIDs: [32, 128, 233]
-groupIDs: [128]
+groupIDs: [32, 128, 233]
 # 
 global: &global
   projectOptions:
