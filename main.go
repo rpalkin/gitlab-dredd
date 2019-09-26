@@ -19,7 +19,7 @@ const (
 var (
 	listenAddress  = flag.String("listen-address", ":8080", "Address to serve HTTP requests")
 	insecureClient = flag.Bool("k", false, "Disable SSL verification")
-	configFile     = flag.String("config", "dredd.yaml", "Path to configuration file")
+	configFile     = flag.String("config", "/etc/gitlab-dredd/gitlab-dredd.yaml", "Path to configuration file")
 	dryRun         = flag.Bool("dry-run", false, "Runs without making changes")
 	pluginMode     = flag.Bool("plugin", true, "Runs as a GitLab plugin.")
 	logLevel       = flag.String("log-level", "INFO", "Level of logging (trace, debug, info, warning, error, fatal, panic).")
