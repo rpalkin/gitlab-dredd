@@ -2,14 +2,21 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
 
 	"github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v2"
 )
 
+const (
+	defaultBaseURL = "https://gitlab.com/"
+)
+
 type Config struct {
-	GroupIDs []int               `yaml:"groupIDs"`
-	Options  map[string]*Options `yaml:"options"`
+	GitLabEndpoint string              `yaml:"gitlabEndpoint"`
+	GitLabToken    string              `yaml:"gitlabToken"`
+	GroupIDs       []int               `yaml:"groupIDs"`
+	Options        map[string]*Options `yaml:"options"`
 }
 
 type Options struct {
@@ -28,6 +35,15 @@ func LoadFromFile(filename string) (*Config, error) {
 	err = yaml.Unmarshal(b, &config)
 	if err != nil {
 		return nil, err
+	}
+	if len(config.GitLabEndpoint) == 0 {
+		config.GitLabEndpoint = os.Getenv("GITLAB_ENDPOINT")
+		if len(config.GitLabEndpoint) == 0 {
+			config.GitLabEndpoint = defaultBaseURL
+		}
+	}
+	if len(config.GitLabToken) == 0 {
+		config.GitLabToken = os.Getenv("GITLAB_TOKEN")
 	}
 	return config, nil
 }

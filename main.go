@@ -5,15 +5,10 @@ import (
 	"flag"
 	"net"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/xanzy/go-gitlab"
-)
-
-const (
-	defaultBaseURL = "https://gitlab.com/"
 )
 
 var (
@@ -44,15 +39,14 @@ func main() {
 		logrus.SetLevel(level)
 	}
 
-	token := os.Getenv("GITLAB_TOKEN")
-	endpoint := os.Getenv("GITLAB_ENDPOINT")
-	if len(endpoint) == 0 {
-		endpoint = defaultBaseURL
+	config, err := LoadFromFile(*configFile)
+	if err != nil {
+		logrus.Fatal(err)
 	}
 
 	logrus.WithFields(logrus.Fields{
 		"plugin":   *pluginMode,
-		"endpoint": endpoint,
+		"endpoint": config.GitLabEndpoint,
 		"insecure": *insecureClient,
 	}).Info("Starting gitlab-dredd...")
 
@@ -63,13 +57,8 @@ func main() {
 		httpClient.Transport = netTransport
 	}
 
-	config, err := LoadFromFile(*configFile)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	client := gitlab.NewClient(httpClient, token)
-	err = client.SetBaseURL(endpoint)
+	client := gitlab.NewClient(httpClient, config.GitLabToken)
+	err = client.SetBaseURL(config.GitLabEndpoint)
 	if err != nil {
 		logrus.Fatal(err)
 	}
