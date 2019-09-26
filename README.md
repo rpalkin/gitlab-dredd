@@ -1,6 +1,6 @@
 # Dredd
 
-Sync approvers, project options and approval configuration in GitLab.
+Sync approvers, project options, protected branches and approval configuration in GitLab.
 
 ## TODO
 
