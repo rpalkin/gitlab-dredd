@@ -40,6 +40,7 @@ func (d *Dredd) ProcessHookPayload(r io.Reader) error {
 		return err
 	}
 	if hook.EventName != "project_create" {
+		logrus.Debugf("Skip %s event", hook.EventName)
 		return nil
 	}
 	logrus.Debugf("Payload received: %#v", hook)
