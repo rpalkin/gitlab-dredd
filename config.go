@@ -13,6 +13,7 @@ const (
 )
 
 type Config struct {
+	ListenAddress  string              `yaml:"listenAddress"`
 	GitLabEndpoint string              `yaml:"gitlabEndpoint"`
 	GitLabToken    string              `yaml:"gitlabToken"`
 	GroupIDs       []int               `yaml:"groupIDs"`

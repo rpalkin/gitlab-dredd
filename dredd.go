@@ -1,9 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"bufio"
+	"encoding/json"
+	"errors"
+	"io"
+	"net/http"
+	"os"
 	"strconv"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/xanzy/go-gitlab"
 )
@@ -14,10 +20,24 @@ type Dredd struct {
 	DryRun bool
 }
 
-func (d *Dredd) Hook() error {
-	hook, err := GetStdinHookPayload()
+func (d *Dredd) Run(mode Mode) (err error) {
+	switch mode {
+	case PluginMode:
+		return d.RunAsPlugin()
+	case StandaloneMode:
+		return d.RunAsStandalone()
+	case WebhookMode:
+		return d.RunAsWebhook()
+	}
+	return errors.New("Unsupported mode")
+}
+
+func (d *Dredd) ProcessHookPayload(r io.Reader) error {
+	decoder := json.NewDecoder(r)
+	hook := &gitlab.HookEvent{}
+	err := decoder.Decode(&hook)
 	if err != nil {
-		return fmt.Errorf("Failed to process payload: %v", err)
+		return err
 	}
 	if hook.EventName != "project_create" {
 		return nil
@@ -34,7 +54,31 @@ func (d *Dredd) Hook() error {
 	return nil
 }
 
-func (d *Dredd) Run() error {
+func (d *Dredd) RunAsPlugin() error {
+	reader := bufio.NewReader(os.Stdin)
+	err := d.ProcessHookPayload(reader)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *Dredd) RunAsWebhook() error {
+	http.HandleFunc("/dredd", func(w http.ResponseWriter, r *http.Request) {
+		err := d.ProcessHookPayload(r.Body)
+		if err != nil {
+			logrus.Errorf("Error processing hook payload: %v", err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.Write([]byte(`ok`))
+	})
+	http.Handle("/metrics", promhttp.Handler())
+	logrus.Infof("Listen address: %s", d.Config.ListenAddress)
+	return http.ListenAndServe(d.Config.ListenAddress, nil)
+}
+
+func (d *Dredd) RunAsStandalone() error {
 	logrus.Info("Requesting projects list...")
 	var projects []*gitlab.Project
 	for _, group := range d.Config.GroupIDs {
