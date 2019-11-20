@@ -39,11 +39,11 @@ func (d *Dredd) ProcessHookPayload(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	logrus.Debugf("Payload received: %#v", hook)
 	if hook.EventName != "project_create" {
-		logrus.Debugf("Skip %s event", hook.EventName)
+		logrus.Debugf("Event %s was skipped", hook.EventName)
 		return nil
 	}
-	logrus.Debugf("Payload received: %#v", hook)
 	project, _, err := d.GitLab.Projects.GetProject(hook.ProjectID, nil)
 	if err != nil {
 		return err
