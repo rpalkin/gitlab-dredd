@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/xanzy/go-gitlab"
+	gitlab "github.com/xanzy/go-gitlab"
 )
 
 func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *Options) (changed bool) {

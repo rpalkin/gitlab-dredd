@@ -6,6 +6,7 @@ Sync approvers, project options, protected branches and approval configuration i
 
 ```yaml
 ---
+listenAddress: 0.0.0.0:8080
 gitlabEndpoint: https://gitlab.local
 gitlabToken: ABCD
 groupIDs: [1, 2, 3]

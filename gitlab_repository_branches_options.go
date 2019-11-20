@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"github.com/xanzy/go-gitlab"
+	gitlab "github.com/xanzy/go-gitlab"
 )
 
 func (d *Dredd) HasRepositoryBranchesOptionsChanges(project *gitlab.Project, opts *Options) (changed bool) {

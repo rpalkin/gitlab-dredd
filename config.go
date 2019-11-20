@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/xanzy/go-gitlab"
+	gitlab "github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v2"
 )
 
@@ -45,6 +45,9 @@ func LoadFromFile(filename string) (*Config, error) {
 	}
 	if len(config.GitLabToken) == 0 {
 		config.GitLabToken = os.Getenv("GITLAB_TOKEN")
+	}
+	if len(config.ListenAddress) == 0 {
+		config.ListenAddress = ":8080"
 	}
 	return config, nil
 }
