@@ -1458,8 +1458,8 @@ func (s *ProjectsService) DeleteProjectApprovalRule(pid interface{}, approvalRul
 // GitLab API docs:
 // https://docs.gitlab.com/ee/api/merge_request_approvals.html#change-allowed-approvers
 type ChangeAllowedApproversOptions struct {
-	ApproverIDs      []int `url:"approver_ids,omitempty" json:"approver_ids,omitempty"`
-	ApproverGroupIDs []int `url:"approver_group_ids,omitempty" json:"approver_group_ids,omitempty"`
+	ApproverIDs      []int `url:"approver_ids" json:"approver_ids"`
+	ApproverGroupIDs []int `url:"approver_group_ids" json:"approver_group_ids"`
 }
 
 // ChangeAllowedApprovers updates the list of approvers and approver groups.
