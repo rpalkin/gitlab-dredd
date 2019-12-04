@@ -18,6 +18,7 @@ type Dredd struct {
 	GitLab *gitlab.Client
 	Config *Config
 	DryRun bool
+	mode   Mode
 }
 
 func (d *Dredd) Run(mode Mode) (err error) {
@@ -29,6 +30,7 @@ func (d *Dredd) Run(mode Mode) (err error) {
 	case WebhookMode:
 		return d.RunAsWebhook()
 	}
+	d.mode = mode
 	return errors.New("Unsupported mode")
 }
 
@@ -140,10 +142,12 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 			return err
 		}
 	}
-	if d.HasFirstIssueChanges(project, opts) && !d.DryRun {
-		err := d.CreateFirstIssue(project, opts)
-		if err != nil {
-			return err
+	if d.mode != StandaloneMode {
+		if d.HasFirstIssueChanges(project, opts) && !d.DryRun {
+			err := d.CreateFirstIssue(project, opts)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
