@@ -56,8 +56,5 @@ func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *O
 
 func (d *Dredd) FixApprovalConfiguration(project *gitlab.Project, opts *Options) error {
 	_, _, err := d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, &opts.ApprovalConfiguration)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

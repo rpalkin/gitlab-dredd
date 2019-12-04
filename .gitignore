@@ -2,3 +2,5 @@
 /gitlab-dredd
 /gitlab-dredd.yaml
 /coverage.txt
+/.vscode
+/.idea

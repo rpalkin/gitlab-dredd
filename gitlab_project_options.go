@@ -42,8 +42,5 @@ func (d *Dredd) HasProjectOptionsChanges(project *gitlab.Project, opts *Options)
 
 func (d *Dredd) FixProjectOptions(project *gitlab.Project, opts *Options) error {
 	_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

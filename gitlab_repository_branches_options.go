@@ -23,7 +23,9 @@ func (d *Dredd) FixRepositoryBranchesOptions(project *gitlab.Project, opts *Opti
 		if err != nil {
 			if strings.Contains(err.Error(), "already exists") {
 				logrus.Infof("Unprotect branch: %s", *branchOpt.Name)
-				d.GitLab.ProtectedBranches.UnprotectRepositoryBranches(project.ID, *branchOpt.Name)
+				if _, err := d.GitLab.ProtectedBranches.UnprotectRepositoryBranches(project.ID, *branchOpt.Name); err != nil {
+					logrus.Errorf("Failed to unprotect branch %q: %v", *branchOpt.Name, err)
+				}
 				goto reprotect
 			}
 			return err

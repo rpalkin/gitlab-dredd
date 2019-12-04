@@ -26,8 +26,5 @@ func (d *Dredd) HasAllowedApproversChanges(project *gitlab.Project, opts *Option
 
 func (d *Dredd) FixAllowedApprovers(project *gitlab.Project, opts *Options) error {
 	_, _, err := d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &opts.AllowedApprovers)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

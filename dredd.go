@@ -72,7 +72,9 @@ func (d *Dredd) RunAsWebhook() error {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		w.Write([]byte(`ok`))
+		if _, err := w.Write([]byte(`ok`)); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 	http.Handle("/metrics", promhttp.Handler())
 	logrus.Infof("Listen address: %s", d.Config.ListenAddress)
@@ -138,6 +140,12 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 			return err
 		}
 	}
+	if d.HasFirstIssueChanges(project, opts) && !d.DryRun {
+		err := d.CreateFirstIssue(project, opts)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -155,9 +163,7 @@ func (d *Dredd) GetProjects(groupID int) ([]*gitlab.Project, error) {
 		if err != nil {
 			return nil, err
 		}
-		for _, project := range fetchedProjects {
-			projects = append(projects, project)
-		}
+		projects = append(projects, fetchedProjects...)
 		nextPageRaw := r.Header.Get("X-Next-Page")
 		if len(nextPageRaw) == 0 {
 			break

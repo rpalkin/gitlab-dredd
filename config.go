@@ -25,6 +25,7 @@ type Options struct {
 	ApprovalConfiguration gitlab.ChangeApprovalConfigurationOptions  `yaml:"approvalConfiguration"`
 	ProjectOptions        gitlab.EditProjectOptions                  `yaml:"projectOptions"`
 	RepositoryBranches    []*gitlab.ProtectRepositoryBranchesOptions `yaml:"repositoryBranches"`
+	FirstIssue            gitlab.CreateIssueOptions                  `yaml:"firstIssue"`
 }
 
 func LoadFromFile(filename string) (*Config, error) {
