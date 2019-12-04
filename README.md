@@ -34,11 +34,19 @@ review-all: &review-all
 review-k8s: &review-k8s
   allowedApprovers:
     approverids: [1, 2, 3]
+welcome-issue: &welcome-issue
+  firstIssue:
+    title: TODO
+    description: |
+      - [ ] README.md
+      - [ ] CHANGELOG.md
+      - [ ] Linters and tests
 # 
 options:
   devops/k8s-tools:
     <<: *global
     <<: *review-k8s
+    <<: *welcome-issue
   devops/k8s-infrastructure:
     <<: *global
     <<: *review-k8s
