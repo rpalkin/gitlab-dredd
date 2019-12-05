@@ -1,25 +1,33 @@
 package main
 
-import "github.com/xanzy/go-gitlab"
+import (
+	"github.com/sirupsen/logrus"
+	"github.com/xanzy/go-gitlab"
+)
 
 const (
 	firstIssueLabel = "good-first-issue"
 )
 
 func (d *Dredd) HasFirstIssueChanges(project *gitlab.Project, opts *Options) bool {
-	if opts.FirstIssue.Title == nil || opts.FirstIssue.Description == nil {
+	if opts.FirstIssue == nil {
 		return false
 	}
+
 	listOpts := &gitlab.ListProjectIssuesOptions{
 		Labels: gitlab.Labels{firstIssueLabel},
 	}
+
 	issues, _, err := d.GitLab.Issues.ListProjectIssues(project.ID, listOpts)
 	if err != nil {
 		return false
 	}
+
 	if len(issues) > 0 {
 		return false
 	}
+
+	logrus.Infof("Create %s issues: %d != 1", firstIssueLabel, len(issues))
 	return true
 }
 

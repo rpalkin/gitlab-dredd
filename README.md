@@ -31,9 +31,17 @@ master-protected: &master-protected
 review-all: &review-all
   allowedApprovers:
     approverids: [1, 2, 3, 4, 5]
+  approvalRule:
+    name: Default
+    approvalsrequired: 1
+    userids: [1, 2, 3, 4, 5]
 review-k8s: &review-k8s
   allowedApprovers:
     approverids: [1, 2, 3]
+  approvalRule:
+    name: Default
+    approvalsrequired: 1
+    userids: [1, 2, 3]
 welcome-issue: &welcome-issue
   firstIssue:
     title: TODO
@@ -55,10 +63,6 @@ options:
     <<: *global
     <<: *review-all
 ```
-
-## TODO
-
-* https://docs.gitlab.com/ee/api/merge_request_approvals.html#create-project-level-rule
 
 ## Links
 

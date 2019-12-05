@@ -6,11 +6,16 @@ import (
 )
 
 func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *Options) (changed bool) {
+	if opts.ApprovalConfiguration == nil {
+		return false
+	}
+
 	ac := opts.ApprovalConfiguration
 	approvals, _, err := d.GitLab.Projects.GetApprovalConfiguration(project.ID)
 	if err != nil {
 		return false
 	}
+
 	if ac.ApprovalsBeforeMerge != nil {
 		if *ac.ApprovalsBeforeMerge != approvals.ApprovalsBeforeMerge {
 			logrus.Infof(
@@ -21,6 +26,7 @@ func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *O
 			changed = true
 		}
 	}
+
 	if ac.ResetApprovalsOnPush != nil {
 		if *ac.ResetApprovalsOnPush != approvals.ResetApprovalsOnPush {
 			logrus.Infof(
@@ -31,6 +37,7 @@ func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *O
 			changed = true
 		}
 	}
+
 	if ac.DisableOverridingApproversPerMergeRequest != nil {
 		if *ac.DisableOverridingApproversPerMergeRequest != approvals.DisableOverridingApproversPerMergeRequest {
 			logrus.Infof(
@@ -41,6 +48,7 @@ func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *O
 			changed = true
 		}
 	}
+
 	if ac.MergeRequestsAuthorApproval != nil {
 		if *ac.MergeRequestsAuthorApproval != approvals.MergeRequestsAuthorApproval {
 			logrus.Infof(
@@ -51,10 +59,11 @@ func (d *Dredd) HasApprovalConfigurationChanges(project *gitlab.Project, opts *O
 			changed = true
 		}
 	}
+
 	return changed
 }
 
 func (d *Dredd) FixApprovalConfiguration(project *gitlab.Project, opts *Options) error {
-	_, _, err := d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, &opts.ApprovalConfiguration)
+	_, _, err := d.GitLab.Projects.ChangeApprovalConfiguration(project.ID, opts.ApprovalConfiguration)
 	return err
 }

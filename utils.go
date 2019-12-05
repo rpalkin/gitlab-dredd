@@ -30,3 +30,15 @@ func GetNamespaceParts(ns string) []string {
 	sort.Sort(byLength(subparts))
 	return subparts
 }
+
+func EqualInt(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}

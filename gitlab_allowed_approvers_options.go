@@ -6,11 +6,16 @@ import (
 )
 
 func (d *Dredd) HasAllowedApproversChanges(project *gitlab.Project, opts *Options) (changed bool) {
+	if opts.AllowedApprovers == nil {
+		return false
+	}
+
 	aa := opts.AllowedApprovers
 	approvals, _, err := d.GitLab.Projects.GetApprovalConfiguration(project.ID)
 	if err != nil {
 		return false
 	}
+
 	if aa.ApproverIDs != nil {
 		if len(aa.ApproverIDs) != len(approvals.Approvers) {
 			logrus.Infof(
@@ -21,10 +26,11 @@ func (d *Dredd) HasAllowedApproversChanges(project *gitlab.Project, opts *Option
 			changed = true
 		}
 	}
+
 	return changed
 }
 
 func (d *Dredd) FixAllowedApprovers(project *gitlab.Project, opts *Options) error {
-	_, _, err := d.GitLab.Projects.ChangeAllowedApprovers(project.ID, &opts.AllowedApprovers)
+	_, _, err := d.GitLab.Projects.ChangeAllowedApprovers(project.ID, opts.AllowedApprovers)
 	return err
 }

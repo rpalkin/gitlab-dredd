@@ -6,6 +6,10 @@ import (
 )
 
 func (d *Dredd) HasProjectOptionsChanges(project *gitlab.Project, opts *Options) (changed bool) {
+	if opts.ProjectOptions == nil {
+		return false
+	}
+
 	po := opts.ProjectOptions
 	if po.ApprovalsBeforeMerge != nil {
 		if *po.ApprovalsBeforeMerge != project.ApprovalsBeforeMerge {
@@ -17,6 +21,7 @@ func (d *Dredd) HasProjectOptionsChanges(project *gitlab.Project, opts *Options)
 			changed = true
 		}
 	}
+
 	if po.OnlyAllowMergeIfPipelineSucceeds != nil {
 		if *po.OnlyAllowMergeIfPipelineSucceeds != project.OnlyAllowMergeIfPipelineSucceeds {
 			logrus.Infof(
@@ -27,6 +32,7 @@ func (d *Dredd) HasProjectOptionsChanges(project *gitlab.Project, opts *Options)
 			changed = true
 		}
 	}
+
 	if po.OnlyAllowMergeIfAllDiscussionsAreResolved != nil {
 		if *po.OnlyAllowMergeIfAllDiscussionsAreResolved != project.OnlyAllowMergeIfAllDiscussionsAreResolved {
 			logrus.Infof(
@@ -37,10 +43,11 @@ func (d *Dredd) HasProjectOptionsChanges(project *gitlab.Project, opts *Options)
 			changed = true
 		}
 	}
+
 	return changed
 }
 
 func (d *Dredd) FixProjectOptions(project *gitlab.Project, opts *Options) error {
-	_, _, err := d.GitLab.Projects.EditProject(project.ID, &opts.ProjectOptions)
+	_, _, err := d.GitLab.Projects.EditProject(project.ID, opts.ProjectOptions)
 	return err
 }

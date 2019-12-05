@@ -22,6 +22,7 @@ type Dredd struct {
 }
 
 func (d *Dredd) Run(mode Mode) (err error) {
+	d.mode = mode
 	switch mode {
 	case PluginMode:
 		return d.RunAsPlugin()
@@ -30,7 +31,6 @@ func (d *Dredd) Run(mode Mode) (err error) {
 	case WebhookMode:
 		return d.RunAsWebhook()
 	}
-	d.mode = mode
 	return errors.New("Unsupported mode")
 }
 
@@ -138,6 +138,12 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 	}
 	if d.HasRepositoryBranchesOptionsChanges(project, opts) && !d.DryRun {
 		err := d.FixRepositoryBranchesOptions(project, opts)
+		if err != nil {
+			return err
+		}
+	}
+	if d.HasProjectApprovalRuleChanges(project, opts) && !d.DryRun {
+		err := d.FixProjectApprovalRule(project, opts)
 		if err != nil {
 			return err
 		}
