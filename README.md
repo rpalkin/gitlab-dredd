@@ -51,7 +51,7 @@ welcome-issue: &welcome-issue
       - [ ] Linters and tests
 enable-jira: &enable-jira
   jiraIntegration:
-    url: https://jira.tcsbank.ru
+    url: https://jira.example.org
     username: USER
     password: PASSWORD
     active: true
