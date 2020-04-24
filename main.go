@@ -61,8 +61,7 @@ func main() {
 		httpClient.Transport = netTransport
 	}
 
-	client := gitlab.NewClient(httpClient, config.GitLabToken)
-	err = client.SetBaseURL(config.GitLabEndpoint)
+	client, err := gitlab.NewClient(config.GitLabToken, gitlab.WithBaseURL(config.GitLabEndpoint), gitlab.WithHTTPClient(httpClient))
 	if err != nil {
 		logrus.Fatal(err)
 	}
