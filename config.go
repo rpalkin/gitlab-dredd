@@ -27,6 +27,7 @@ type Options struct {
 	RepositoryBranches    []*gitlab.ProtectRepositoryBranchesOptions `yaml:"repositoryBranches"`
 	FirstIssue            *gitlab.CreateIssueOptions                 `yaml:"firstIssue"`
 	ApprovalRule          *gitlab.CreateProjectLevelRuleOptions      `yaml:"approvalRule"`
+	JiraIntegration       *gitlab.SetJiraServiceOptions              `yaml:"jiraIntegration"`
 }
 
 func LoadFromFile(filename string) (*Config, error) {

@@ -148,6 +148,13 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 			return err
 		}
 	}
+	if d.HasJiraIntegrationChanges(project, opts) && !d.DryRun {
+		err := d.SetJiraIntegration(project, opts)
+		if err != nil {
+			return err
+		}
+	}
+
 	if d.mode != StandaloneMode {
 		if d.HasFirstIssueChanges(project, opts) && !d.DryRun {
 			err := d.CreateFirstIssue(project, opts)

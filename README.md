@@ -49,16 +49,27 @@ welcome-issue: &welcome-issue
       - [ ] README.md
       - [ ] CHANGELOG.md
       - [ ] Linters and tests
+enable-jira: &enable-jira
+  jiraIntegration:
+    url: https://jira.tcsbank.ru
+    username: USER
+    password: PASSWORD
+    active: true
+    commitevents: false
+    mergerequestsevents: true
+    commentoneventenabled: false
 # 
 options:
   devops/k8s-tools:
     <<: *global
     <<: *review-k8s
     <<: *welcome-issue
+    <<: *enable-jira
   devops/k8s-infrastructure:
     <<: *global
     <<: *review-k8s
     <<: *master-protected
+    <<: *enable-jira
   devops:
     <<: *global
     <<: *review-all
