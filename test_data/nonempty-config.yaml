@@ -1,0 +1,5 @@
+---
+listenAddress: 0.0.0.0:8080
+gitlabEndpoint: http://gitlab.local
+gitlabToken: ABCD
+groupIDs: [89]

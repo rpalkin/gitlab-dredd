@@ -60,11 +60,9 @@ func LoadFromFile(filename string) (*Config, error) {
 func (c *Config) OptionsByPath(ns string) *Options {
 	parts := GetNamespaceParts(ns)
 	for _, part := range parts {
-		opt, ok := c.Options[part]
-		if !ok {
-			continue
+		if opt, ok := c.Options[part]; ok {
+			return opt
 		}
-		return opt
 	}
 	return nil
 }

@@ -19,16 +19,16 @@ func (s byLength) Less(i, j int) bool {
 
 func GetNamespaceParts(ns string) []string {
 	parts := strings.Split(ns, "/")
-	subparts := []string{ns}
+	subParts := []string{ns}
 	for index := 0; index < len(parts); index++ {
 		part := strings.Join(parts[0:index], "/")
 		if len(part) == 0 {
 			continue
 		}
-		subparts = append(subparts, part)
+		subParts = append(subParts, part)
 	}
-	sort.Sort(byLength(subparts))
-	return subparts
+	sort.Sort(byLength(subParts))
+	return subParts
 }
 
 func EqualInt(a, b []int) bool {

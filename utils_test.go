@@ -3,6 +3,8 @@ package main
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetNamespaceParts(t *testing.T) {
@@ -28,5 +30,32 @@ func TestGetNamespaceParts(t *testing.T) {
 		if !reflect.DeepEqual(res, test.res) {
 			t.Errorf("%v != %v", res, test.res)
 		}
+	}
+}
+
+func TestEqualInt(t *testing.T) {
+	tests := []struct {
+		in1 []int
+		in2 []int
+		eq  bool
+	}{
+		{
+			in1: []int{1, 2, 3},
+			in2: []int{},
+			eq:  false,
+		},
+		{
+			in1: []int{1, 2, 3},
+			in2: []int{1, 2, 3},
+			eq:  true,
+		},
+		{
+			in1: []int{1, 2, 3},
+			in2: []int{1, 3, 4},
+			eq:  false,
+		},
+	}
+	for _, test := range tests {
+		assert.Equal(t, test.eq, EqualInt(test.in1, test.in2))
 	}
 }
