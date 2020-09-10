@@ -1,6 +1,7 @@
 # Dredd
 
 [![Build Status](https://travis-ci.com/leominov/gitlab-dredd.svg?branch=master)](https://travis-ci.com/leominov/gitlab-dredd)
+[![codecov](https://codecov.io/gh/leominov/gitlab-dredd/branch/master/graph/badge.svg)](https://codecov.io/gh/leominov/gitlab-dredd)
 
 Supported Gitlab project settings:
  - Sync approvers
