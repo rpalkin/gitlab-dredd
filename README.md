@@ -92,4 +92,5 @@ options:
 
 ## Links
 
+* [Docker Hub](https://hub.docker.com/repository/docker/leominov/gitlab-dredd)
 * [GitLab Plugin system](https://docs.gitlab.com/ee/administration/plugins.html)
