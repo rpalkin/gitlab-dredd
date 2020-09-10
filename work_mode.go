@@ -26,5 +26,5 @@ func ParseWorkMode(mode string) (Mode, error) {
 	if ok {
 		return m, nil
 	}
-	return UnknownMode, errors.New("Unknown mode")
+	return UnknownMode, errors.New("unknown mode")
 }
