@@ -124,6 +124,13 @@ func (d *Dredd) processProject(project *gitlab.Project) error {
 			return err
 		}
 	}
+	if d.HasProjectPushRulesChanges(project, opts) && !d.DryRun {
+		err := d.FixProjectPushRules(project, opts)
+		if err != nil {
+			return err
+		}
+	}
+
 	if d.HasAllowedApproversChanges(project, opts) && !d.DryRun {
 		err := d.FixAllowedApprovers(project, opts)
 		if err != nil {

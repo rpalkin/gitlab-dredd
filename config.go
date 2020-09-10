@@ -24,6 +24,7 @@ type Options struct {
 	AllowedApprovers      *gitlab.ChangeAllowedApproversOptions      `yaml:"allowedApprovers"`
 	ApprovalConfiguration *gitlab.ChangeApprovalConfigurationOptions `yaml:"approvalConfiguration"`
 	ProjectOptions        *gitlab.EditProjectOptions                 `yaml:"projectOptions"`
+	PushRules             *gitlab.EditProjectPushRuleOptions         `yaml:"pushRules"`
 	RepositoryBranches    []*gitlab.ProtectRepositoryBranchesOptions `yaml:"repositoryBranches"`
 	FirstIssue            *gitlab.CreateIssueOptions                 `yaml:"firstIssue"`
 	ApprovalRule          *gitlab.CreateProjectLevelRuleOptions      `yaml:"approvalRule"`
@@ -32,11 +33,12 @@ type Options struct {
 
 func LoadFromFile(filename string) (*Config, error) {
 	config := &Config{}
-	b, err := ioutil.ReadFile(filename)
+	confContent, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
-	err = yaml.Unmarshal(b, &config)
+	confContent = []byte(os.ExpandEnv(string(confContent)))
+	err = yaml.Unmarshal(confContent, &config)
 	if err != nil {
 		return nil, err
 	}

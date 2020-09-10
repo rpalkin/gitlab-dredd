@@ -1,6 +1,14 @@
 # Dredd
 
-Sync approvers, project options, protected branches and approval configuration in GitLab.
+Supported Gitlab project settings:
+ - Sync approvers
+ - Project options
+ - Protected branches
+ - Approval configuration
+ - Jira integration
+ - Push rules
+ 
+ Yaml configuration supports environment variables in ${VAR} notation
 
 ## Configuration example
 
@@ -42,6 +50,10 @@ review-k8s: &review-k8s
     name: Default
     approvalsrequired: 1
     userids: [1, 2, 3]
+branch-and-commit-with-issue: &branch-and-commit-with-issue
+  pushRules:
+    branchnameregex: ^DEV-[\d]+.*
+    commitmessageregex: ^DEV-[\d]+.*
 welcome-issue: &welcome-issue
   firstIssue:
     title: TODO
@@ -65,6 +77,7 @@ options:
     <<: *review-k8s
     <<: *welcome-issue
     <<: *enable-jira
+    <<: *branch-and-commit-with-issue
   devops/k8s-infrastructure:
     <<: *global
     <<: *review-k8s
