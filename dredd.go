@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
@@ -188,15 +187,10 @@ func (d *Dredd) GetProjects(groupID int) ([]*gitlab.Project, error) {
 			return nil, err
 		}
 		projects = append(projects, fetchedProjects...)
-		nextPageRaw := r.Header.Get("X-Next-Page")
-		if len(nextPageRaw) == 0 {
+		if r.NextPage == 0 {
 			break
 		}
-		nextPage, err := strconv.Atoi(nextPageRaw)
-		if err != nil {
-			break
-		}
-		page = nextPage
+		page = r.NextPage
 	}
 	return projects, nil
 }
