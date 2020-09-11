@@ -13,22 +13,22 @@ const (
 )
 
 type Config struct {
-	ListenAddress  string              `yaml:"listenAddress"`
 	GitLabEndpoint string              `yaml:"gitlabEndpoint"`
 	GitLabToken    string              `yaml:"gitlabToken"`
 	GroupIDs       []int               `yaml:"groupIDs"`
+	ListenAddress  string              `yaml:"listenAddress"`
 	Options        map[string]*Options `yaml:"options"`
 }
 
 type Options struct {
 	AllowedApprovers      *gitlab.ChangeAllowedApproversOptions      `yaml:"allowedApprovers"`
 	ApprovalConfiguration *gitlab.ChangeApprovalConfigurationOptions `yaml:"approvalConfiguration"`
+	ApprovalRule          *gitlab.CreateProjectLevelRuleOptions      `yaml:"approvalRule"`
+	FirstIssue            *gitlab.CreateIssueOptions                 `yaml:"firstIssue"`
+	JiraIntegration       *gitlab.SetJiraServiceOptions              `yaml:"jiraIntegration"`
 	ProjectOptions        *gitlab.EditProjectOptions                 `yaml:"projectOptions"`
 	PushRules             *gitlab.EditProjectPushRuleOptions         `yaml:"pushRules"`
 	RepositoryBranches    []*gitlab.ProtectRepositoryBranchesOptions `yaml:"repositoryBranches"`
-	FirstIssue            *gitlab.CreateIssueOptions                 `yaml:"firstIssue"`
-	ApprovalRule          *gitlab.CreateProjectLevelRuleOptions      `yaml:"approvalRule"`
-	JiraIntegration       *gitlab.SetJiraServiceOptions              `yaml:"jiraIntegration"`
 }
 
 func LoadFromFile(filename string) (*Config, error) {
